@@ -4,7 +4,7 @@ import sys
 import seaborn as sns
 import matplotlib.pyplot as plt
 
-features_to_exclude = []#"f3", "f5", "f9", "f10", "f12", "f15", "f18", "f19", "f20", "f24"]
+features_to_exclude = ["f3", "f5", "f9", "f10", "f12", "f15", "f16", "f17", "f18", "f19", "f20", "f22", "f25", "f30"]
 def load_dataset():
     if len(sys.argv) != 2:
         raise Exception("Error : Wrong number of arguments -> Usage : python3 describe.py path/to/dataset.csv")
