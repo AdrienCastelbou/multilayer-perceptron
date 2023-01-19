@@ -41,6 +41,10 @@ def binarise(X):
             bin_x[i] = 0
     return bin_x
 
+def softmax(x):
+    exp_x = np.exp(x)
+    return exp_x / np.sum(exp_x)
+
 def train(df):
     X = df[[feature for feature in df.columns if feature not in features_to_exclude]].to_numpy()
     y = binarise(df["State"].to_numpy())
@@ -60,7 +64,8 @@ def main():
     for i in range(1, 31):
         col_names.append(f"f{i}")
     df.columns = col_names
-    train(df)
+    scores = [3.0, 1.0, 0.2]
+    print(softmax(scores))
 
 if __name__ == "__main__":
     main()
