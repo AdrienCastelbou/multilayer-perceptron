@@ -3,10 +3,6 @@ import numpy as np
 import sys
 import seaborn as sns
 import matplotlib.pyplot as plt
-from sklearn.neural_network import MLPClassifier
-from sklearn.datasets import make_classification
-from sklearn.model_selection import train_test_split
-from sklearn.model_selection import cross_val_score
 from MLP import MLP
 
 
@@ -47,16 +43,6 @@ def softmax(x):
     exp_x = np.exp(x)
     return exp_x / np.sum(exp_x)
 
-def sktrain(df):
-    X = df[[feature for feature in df.columns if feature not in features_to_exclude]].to_numpy()
-    y = binarise(df["State"].to_numpy())
-    y = df["State"].to_numpy()
-    X_train, X_test, y_train, y_test = train_test_split(X, y, stratify=y, random_state=1)
-    clf = MLPClassifier(random_state=1, max_iter=300).fit(X_train, y_train)
-    clf.fit(X_train, y_train)
-    scores = cross_val_score(clf, X, y, cv=5)
-    print("%0.2f accuracy with a standard deviation of %0.2f" % (scores.mean(), scores.std()))
-    print(clf.score(X_test, y_test))
     
 def train_model(df):
     X = df[[feature for feature in df.columns if feature not in features_to_exclude]].to_numpy()

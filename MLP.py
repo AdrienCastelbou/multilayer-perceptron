@@ -8,13 +8,16 @@ class MLP():
 
 
     def softmax(self, x):
-        exp_x = np.exp(x)
+        exp_x = np.exp(x - np.max(x))
         return exp_x / np.sum(exp_x)
 
 
     def loss(self, logits, y):
-        logits_for_answer = logits[np.arange((len(logits))), y]
-        xentropy = - logits_for_answer * np.log(np.sum(np.exp(logits), axis=-1))
+        cost = - np.mean(y * np.log(logits.T + 1e-8))
+        print(cost)
+        return cost
+        xentropy = - y * np.log(np.sum(np.exp(logits), axis=-1))
+        print(xentropy)
         return xentropy
 
     def grad_loss(self, logits, y):
@@ -41,7 +44,6 @@ class MLP():
         for l in self.network:
             activations.append(l.forward(input.reshape(-1,)))
             input = activations[-1]
-        assert len(activations) == len(self.network)
         return activations
 
 
@@ -57,9 +59,8 @@ class MLP():
             self.create_network_(X.shape[1], 2)
         layer_activations = self.forward(X)
         layers_input = [X] + layer_activations
-        print(layer_activations)
-        logits = layer_activations[-1] 
-        loss = self.loss(logits, y)
+        logits = layer_activations[-1]
+        loss = self.loss(self.softmax(logits), y)
         loss_grad = self.grad_loss(logits, y)    
         for layer_index in range(len(self.network))[::-1]:
             layer = self.network(layer_index)

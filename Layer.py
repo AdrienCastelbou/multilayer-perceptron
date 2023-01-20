@@ -46,7 +46,6 @@ class Dense(Layer):
         grad_input = grad_output @ self.weights.T
         grad_weights = input.T @ grad_output
         grad_biases = grad_output.mean(axis=0)*input.shape[0]
-        assert grad_weights.shape == self.weights.shape and grad_biases.shape == self.biases.shape
         self.weights = self.weights - self.learning_rate * grad_weights
         self.biases = self.biases - self.learning_rate * grad_biases
         return grad_input
