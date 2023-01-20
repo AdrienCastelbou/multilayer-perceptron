@@ -19,7 +19,10 @@ class ReLU(Layer):
         pass
 
     def forward(self, input):
-        relu_forward = max(0, input)
+        relu_forward = []
+        for i in input:
+            relu_forward.append(max(0, i))
+        relu_forward = np.array(relu_forward)
         return relu_forward
     
     def backward(self, input, grad_output):
@@ -36,7 +39,7 @@ class Dense(Layer):
     
 
     def forward(self, input):
-        return input @ self.weights + self.biaises
+        return input @ self.weights + self.biases
     
 
     def backward(self, input, grad_output):

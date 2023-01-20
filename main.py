@@ -7,6 +7,8 @@ from sklearn.neural_network import MLPClassifier
 from sklearn.datasets import make_classification
 from sklearn.model_selection import train_test_split
 from sklearn.model_selection import cross_val_score
+from MLP import MLP
+
 
 features_to_exclude = ["State", "f3", "f5", "f9", "f10", "f12", "f15", "f16", "f17", "f18", "f19", "f20", "f22", "f25", "f30"]
 def load_dataset():
@@ -45,7 +47,7 @@ def softmax(x):
     exp_x = np.exp(x)
     return exp_x / np.sum(exp_x)
 
-def train(df):
+def sktrain(df):
     X = df[[feature for feature in df.columns if feature not in features_to_exclude]].to_numpy()
     y = binarise(df["State"].to_numpy())
     y = df["State"].to_numpy()
@@ -56,6 +58,15 @@ def train(df):
     print("%0.2f accuracy with a standard deviation of %0.2f" % (scores.mean(), scores.std()))
     print(clf.score(X_test, y_test))
     
+def train_model(df):
+    X = df[[feature for feature in df.columns if feature not in features_to_exclude]].to_numpy()
+    y = binarise(df["State"].to_numpy())
+    myMLP = MLP()
+    t = X[1]
+    t = t.reshape((1, t.shape[0]))
+    ty = np.array(y[1]).reshape(1, 1)
+    print(myMLP.train(t, ty))
+    
 
 def main():
     df = load_dataset()
@@ -64,8 +75,8 @@ def main():
     for i in range(1, 31):
         col_names.append(f"f{i}")
     df.columns = col_names
-    scores = [3.0, 1.0, 0.2]
-    print(softmax(scores))
+    train_model(df)
+
 
 if __name__ == "__main__":
     main()
