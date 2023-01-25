@@ -26,7 +26,7 @@ class ReLU(Layer):
     
 
 class Dense(Layer):
-    def __init__(self, input_units, output_units, learning_rate=0.1):
+    def __init__(self, input_units, output_units, learning_rate=0.005):
         self.learning_rate = learning_rate
         self.weights = np.random.normal(loc=0.0, 
                                         scale = np.sqrt(2/(input_units+output_units)), 
@@ -40,6 +40,7 @@ class Dense(Layer):
         grad_input = np.dot(grad_output, self.weights.T)
         grad_weights = np.dot(input.T, grad_output)
         grad_biases = grad_output.mean(axis=0)*input.shape[0]
+        print(grad_weights, self.weights)
         self.weights = self.weights - self.learning_rate * grad_weights
         self.biases = self.biases - self.learning_rate * grad_biases
         return grad_input
