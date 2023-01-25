@@ -1,5 +1,5 @@
 from Layer import *
-
+from matplotlib import pyplot as plt
 class MLP():
     def __init__(self, hidden_layer_sizes=2, max_iter=300):
         self.n_layers = hidden_layer_sizes
@@ -24,7 +24,7 @@ class MLP():
         grad = self.softmax(X)
         grad[[range(m)],y] -= 1
         grad = grad/m
-        print(grad)
+        return grad
 
 
 
@@ -56,7 +56,7 @@ class MLP():
 
     def train(self, X, y):
         if self.network == []:
-            self.create_network_(X.shape[1], 2)
+            self.create_network_(X.shape[1], len(np.unique(y)))
         layer_activations = self.forward(X)
         layers_input = [X] + layer_activations
         logits = layer_activations[-1]
@@ -69,6 +69,13 @@ class MLP():
 
     def fit(self, X, y):
         self.create_network_(X.shape[1], len(np.unique(y)))
-        layer_activations = self.forward(X)
-        layers_input = [X] + layer_activations
-        logits = layer_activations[-1]
+        train_log = []
+        for epoch in range(20):
+            self.train(X, y)
+            train_log.append(np.mean(self.predict(X)==y))
+            print("Epoch",epoch)
+            print("Train accuracy:",train_log[-1])
+        plt.plot(train_log,label='train accuracy')
+        plt.legend(loc='best')
+        plt.grid()
+        plt.show()
