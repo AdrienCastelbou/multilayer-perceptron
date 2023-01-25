@@ -50,7 +50,7 @@ def train_model(df):
     y = binarise(df["State"].to_numpy())
     y = y.reshape((y.shape[0], -1))
     myMLP = MLP()
-    myMLP.fit(X, y)
+    myMLP.train(X, y)
     
 
 def main():

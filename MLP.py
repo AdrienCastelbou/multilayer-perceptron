@@ -21,9 +21,11 @@ class MLP():
 
     def grad_loss(self, X, y):
         m = y.shape[0]
-        grad = self.softmax(X)
+        grad = self.softmax(X) + 1e-10
+        print(grad)
         grad[[range(m)],y] -= 1
         grad = grad/m
+        print(grad)
         return grad
 
 
