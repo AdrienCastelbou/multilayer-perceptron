@@ -19,10 +19,7 @@ class ReLU(Layer):
         pass
 
     def forward(self, input):
-        relu_forward = []
-        for i in input:
-            relu_forward.append(max(0, i))
-        relu_forward = np.array(relu_forward)
+        relu_forward = np.maximum(0,input)
         return relu_forward
     
     def backward(self, input, grad_output):

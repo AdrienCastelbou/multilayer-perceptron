@@ -12,19 +12,19 @@ class MLP():
         return exp_x / np.sum(exp_x)
 
 
-    def loss(self, logits, y):
-        cost = - np.mean(y * np.log(logits.T + 1e-8))
-        print(cost)
-        return cost
-        xentropy = - y * np.log(np.sum(np.exp(logits), axis=-1))
-        print(xentropy)
-        return xentropy
+    def loss(self, X, y):
+        m = X.shape[0]
+        p = self.softmax(X) + 1e-10
+        log_likelihood = -np.log(p[[range(m)],y])
+        loss = np.sum(log_likelihood) / m
+        return loss
 
-    def grad_loss(self, logits, y):
-        ones_for_answers = np.zeros_like(logits)
-        ones_for_answers[np.arange(len(logits)),y] = 1
-        sftmax = self.softmax(logits)
-        return (- ones_for_answers + sftmax) / logits.shape[0]
+    def grad_loss(self, X, y):
+        m = y.shape[0]
+        grad = self.softmax(X)
+        grad[[range(m)],y] -= 1
+        grad = grad/m
+        print(grad)
 
 
 
@@ -42,7 +42,7 @@ class MLP():
         activations = []
         input = X
         for l in self.network:
-            activations.append(l.forward(input.reshape(-1,)))
+            activations.append(l.forward(input))
             input = activations[-1]
         return activations
 
@@ -60,10 +60,10 @@ class MLP():
         layer_activations = self.forward(X)
         layers_input = [X] + layer_activations
         logits = layer_activations[-1]
-        loss = self.loss(self.softmax(logits), y)
+        loss = self.loss(logits, y)
         loss_grad = self.grad_loss(logits, y)    
         for layer_index in range(len(self.network))[::-1]:
-            layer = self.network(layer_index)
+            layer = self.network[layer_index]
             loss_grad = layer.backward(layers_input[layer_index], loss_grad)
         return np.mean(loss)
 

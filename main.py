@@ -32,11 +32,12 @@ def show_pair_plot(df):
 
 def binarise(X):
     bin_x = np.zeros(X.shape)
+    bin_x = bin_x.astype(int)
     for i in range(len(X)):
         if X[i] == "M":
-            bin_x[i] = 1
+            bin_x[i] = int(1)
         elif X[i] == "B":
-            bin_x[i] = 0
+            bin_x[i] = int(0)
     return bin_x
 
 def softmax(x):
@@ -47,11 +48,9 @@ def softmax(x):
 def train_model(df):
     X = df[[feature for feature in df.columns if feature not in features_to_exclude]].to_numpy()
     y = binarise(df["State"].to_numpy())
+    y = y.reshape((y.shape[0], -1))
     myMLP = MLP()
-    t = X[1]
-    t = t.reshape((1, t.shape[0]))
-    ty = np.array(y[1]).reshape(1, 1)
-    print(myMLP.train(t, ty))
+    myMLP.train(X, y)
     
 
 def main():
