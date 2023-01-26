@@ -40,7 +40,6 @@ class Dense(Layer):
         grad_input = np.dot(grad_output, self.weights.T)
         grad_weights = np.dot(input.T, grad_output)
         grad_biases = grad_output.mean(axis=0)*input.shape[0]
-        print(grad_weights, self.weights)
         self.weights = self.weights - self.learning_rate * grad_weights
         self.biases = self.biases - self.learning_rate * grad_biases
         return grad_input

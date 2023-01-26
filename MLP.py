@@ -25,15 +25,15 @@ class MLP():
         preds = self.get_preds_proba(X, y)
         log_likelihood = -np.log(preds)
         loss = np.sum(log_likelihood) / len(X)
-        print(loss)
         return loss
     
 
     def grad_softmax_crossentropy_with_logits(self, X, y):
-        grad = self.get_preds_proba(X, y)
-        grad -= 1
-        grad = grad / len(X)
-        return grad
+        ones_for_answers = np.zeros_like(X)
+        for i in range(len(X)):
+            ones_for_answers[i,y[i][0]] = 1
+        softmax = self.softmax(X)   
+        return (- ones_for_answers + softmax) / X.shape[0]
 
 
 
@@ -60,7 +60,7 @@ class MLP():
         if self.network == []:
             self.create_network_(X.shape[1], 2)
         logits = self.forward(X)[-1]
-        return logits.argmax(axis=-1)
+        return logits.argmax(axis=-1).reshape(-1, 1)
     
 
     def train(self, X, y):
@@ -78,7 +78,7 @@ class MLP():
     def fit(self, X, y):
         self.create_network_(X.shape[1], len(np.unique(y)))
         train_log = []
-        for epoch in range(200):
+        for epoch in range(2000):
             loss = self.train(X, y)
             train_log.append(np.mean(self.predict(X)==y))
             print("Epoch",epoch)
