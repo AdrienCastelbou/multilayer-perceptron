@@ -1,5 +1,7 @@
 from Layer import *
 from matplotlib import pyplot as plt
+from utils import data_spliter
+
 class MLP():
     def __init__(self, hidden_layer_sizes=2, max_iter=300):
         self.n_layers = hidden_layer_sizes
@@ -77,10 +79,14 @@ class MLP():
 
     def fit(self, X, y):
         self.create_network_(X.shape[1], len(np.unique(y)))
+        X_train, X_test, y_train, y_test = data_spliter(X, y, 0.8)
         loss_log = []
+        val_loss_log = []
         for epoch in range(1, self.max_iter + 1):
-            self.train(X, y)
-            preds = self.predict(X)
-            loss_log.append(self.loss(preds, y))
-            print(f"Epoch {epoch}/{self.max_iter} - loss: {self.loss(preds, y)}")
-        return loss_log
+            self.train(X_train, y_train)
+            train_preds = self.predict(X_train)
+            test_preds = self.predict(X_test)
+            loss_log.append(self.loss(train_preds, y_train))
+            val_loss_log.append(self.loss(test_preds, y_test))
+            print(f"Epoch {epoch}/{self.max_iter} - loss: {self.loss(train_preds, y_train)} - val_loss: {self.loss(test_preds, y_test)}")
+        return loss_log, val_loss_log
