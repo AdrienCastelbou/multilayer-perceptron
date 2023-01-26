@@ -36,9 +36,8 @@ class MLP():
     def grad_softmax_crossentropy(self, X, y):
         ones_for_answers = np.zeros_like(X)
         for i in range(len(X)):
-            ones_for_answers[i,y[i][0]] = 1
-        softmax = self.softmax(X)   
-        return (- ones_for_answers + softmax) / X.shape[0]
+            ones_for_answers[i,y[i][0]] = 1 
+        return (- ones_for_answers + X) / X.shape[0]
 
 
 
@@ -58,6 +57,7 @@ class MLP():
         for l in self.network:
             activations.append(l.forward(input))
             input = activations[-1]
+        activations[-1] = self.softmax(input)
         return activations
 
 
