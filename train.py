@@ -38,7 +38,7 @@ def show_pair_plot(df):
 
     
 def train_model(X, y):
-    myMLP = MLP(max_iter=3000)
+    myMLP = MLP(max_iter=1000)
     myMLP.fit(normalize(X), y)
     save_models(myMLP)
     plt.plot(myMLP.loss_curve,label='loss')

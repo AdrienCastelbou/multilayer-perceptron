@@ -74,4 +74,4 @@ class MLP():
             test_preds = self.predict(X_test)
             self.loss_curve.append(self.loss(train_preds, y_train))
             self.val_loss_curve.append(self.loss(test_preds, y_test))
-            print(f"Epoch {epoch}/{self.max_iter} - loss: {self.loss(train_preds, y_train)} - val_loss: {self.loss(test_preds, y_test)}")
+            print(f"Epoch {epoch}/{self.max_iter} - loss: {self.loss(train_preds, y_train)} - val_loss: {self.loss(test_preds, y_test)} - accuracy: {np.mean(train_preds == y_train)} - val_accuracy: {np.mean(test_preds == y_test)} ")
