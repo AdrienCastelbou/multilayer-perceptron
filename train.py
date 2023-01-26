@@ -38,11 +38,11 @@ def show_pair_plot(df):
 
     
 def train_model(X, y):
-    myMLP = MLP(max_iter=1000)
-    loss_log, val_log = myMLP.fit(normalize(X), y)
+    myMLP = MLP(max_iter=3000)
+    myMLP.fit(normalize(X), y)
     save_models(myMLP)
-    plt.plot(loss_log,label='loss')
-    plt.plot(val_log,label='val_loss')
+    plt.plot(myMLP.loss_curve,label='loss')
+    plt.plot(myMLP.val_loss_curve,label='val_loss')
     plt.legend(loc='best')
     plt.grid()
     plt.show()

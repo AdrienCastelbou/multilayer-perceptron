@@ -26,7 +26,7 @@ class ReLU(Layer):
     
 
 class Dense(Layer):
-    def __init__(self, input_units, output_units, learning_rate=0.1):
+    def __init__(self, input_units, output_units, learning_rate=0.001):
         self.learning_rate = learning_rate
         self.weights = np.random.normal(loc=0.0, 
                                         scale = np.sqrt(2/(input_units+output_units)), 

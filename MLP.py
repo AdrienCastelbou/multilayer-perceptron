@@ -3,10 +3,13 @@ from matplotlib import pyplot as plt
 from utils import data_spliter
 
 class MLP():
-    def __init__(self, hidden_layer_sizes=2, max_iter=300):
+    def __init__(self, hidden_layer_sizes=np.full(2, 100), max_iter=300, learning_rate=0.001):
         self.n_layers = hidden_layer_sizes
         self.max_iter = max_iter
         self.network = []
+        self.loss_curve = []
+        self.val_loss_curve = []
+        self.learning_rate = learning_rate
 
 
     def softmax(self, X):
@@ -28,15 +31,13 @@ class MLP():
         return (- ones_for_answers + X) / X.shape[0]
 
 
-    def create_network_(self, n_inputs, n_outputs):
+    def create_network_(self, n_inputs, n_final_outputs):
         self.network = []
-        self.network.append(Dense(n_inputs, 4))
-        self.network.append(ReLU())
-        for i in range(self.n_layers - 1):
-            self.network.append(Dense(4, 4))
+        for i in range(len(self.n_layers)):
+            self.network.append(Dense(n_inputs, self.n_layers[i], learning_rate=self.learning_rate))
             self.network.append(ReLU())
-        self.network.append(Dense(4, n_outputs))
-        self.n_layers += 2
+            n_inputs = self.n_layers[i]
+        self.network.append(Dense(n_inputs, n_final_outputs))
 
     def forward(self, X):
         activations = []
@@ -67,13 +68,10 @@ class MLP():
     def fit(self, X, y):
         self.create_network_(X.shape[1], len(np.unique(y)))
         X_train, X_test, y_train, y_test = data_spliter(X, y, 0.8)
-        loss_log = []
-        val_loss_log = []
         for epoch in range(1, self.max_iter + 1):
             self.train(X_train, y_train)
             train_preds = self.predict(X_train)
             test_preds = self.predict(X_test)
-            loss_log.append(self.loss(train_preds, y_train))
-            val_loss_log.append(self.loss(test_preds, y_test))
+            self.loss_curve.append(self.loss(train_preds, y_train))
+            self.val_loss_curve.append(self.loss(test_preds, y_test))
             print(f"Epoch {epoch}/{self.max_iter} - loss: {self.loss(train_preds, y_train)} - val_loss: {self.loss(test_preds, y_test)}")
-        return loss_log, val_loss_log

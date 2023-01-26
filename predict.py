@@ -26,7 +26,7 @@ def main():
     X, y = data_preprocessing(df)
     X = normalize(X)
     preds = model.predict(X)
-    print(model.loss(preds, y))
+    print(f"loss: {model.loss(preds, y)}, accuracy: {np.mean(preds == y)}")
     plot_model_performance(y, preds)
 if __name__ == "__main__":
     main()
