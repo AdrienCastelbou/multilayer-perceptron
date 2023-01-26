@@ -21,14 +21,17 @@ class MLP():
             preds.append([p[i][y[i]]])
         return np.array(preds).reshape(len(preds), -1)
 
-    def loss(self, X, y):
+    def softmax_crossentropy(self, X, y):
         preds = self.get_preds_proba(X, y)
         log_likelihood = -np.log(preds)
         loss = np.sum(log_likelihood) / len(X)
         return loss
     
+    def loss(self, y_hat, y):
+        v_ones = np.ones((y.shape[0], 1))
+        return - float(y.T @ np.log(y_hat + 1e-15) + (v_ones - y).T @ np.log(1 - y_hat + 1e-15)) / y.shape[0]
 
-    def grad_softmax_crossentropy_with_logits(self, X, y):
+    def grad_softmax_crossentropy(self, X, y):
         ones_for_answers = np.zeros_like(X)
         for i in range(len(X)):
             ones_for_answers[i,y[i][0]] = 1
@@ -65,25 +68,19 @@ class MLP():
 
     def train(self, X, y):
         layer_activations = self.forward(X)
-        
         layer_inputs = [X]+layer_activations
         logits = layer_activations[-1]
-        loss = self.loss(logits,y)
-        loss_grad = self.grad_softmax_crossentropy_with_logits(logits,y)
+        loss_grad = self.grad_softmax_crossentropy(logits,y)
         for layer_index in range(len(self.network))[::-1]:
             layer = self.network[layer_index]
             loss_grad = layer.backward(layer_inputs[layer_index],loss_grad) 
-        return np.mean(loss)
 
     def fit(self, X, y):
         self.create_network_(X.shape[1], len(np.unique(y)))
-        train_log = []
-        for epoch in range(2000):
-            loss = self.train(X, y)
-            train_log.append(np.mean(self.predict(X)==y))
-            print("Epoch",epoch)
-            print("Train accuracy:",train_log[-1], "loss:", loss)
-        plt.plot(train_log,label='train accuracy')
-        plt.legend(loc='best')
-        plt.grid()
-        plt.show()
+        loss_log = []
+        for epoch in range(1, self.max_iter + 1):
+            self.train(X, y)
+            preds = self.predict(X)
+            loss_log.append(self.loss(preds, y))
+            print(f"Epoch {epoch}/{self.max_iter} - loss: {self.loss(preds, y)}")
+        return loss_log

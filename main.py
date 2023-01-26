@@ -57,8 +57,11 @@ def train_model(df):
     y = binarise(df["State"].to_numpy())
     y = y.reshape((y.shape[0], -1))
     myMLP = MLP()
-    myMLP.fit(normalize(X), y)
-    
+    loss_log = myMLP.fit(normalize(X), y)
+    plt.plot(loss_log,label='loss')
+    plt.legend(loc='best')
+    plt.grid()
+    plt.show()
 
 def main():
     df = load_dataset()
