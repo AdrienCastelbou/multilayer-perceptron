@@ -1,4 +1,7 @@
 import numpy as np
+from constants import features_to_exclude
+import pickle
+
 
 def normalize(x):
     norm_x = np.array([])
@@ -36,3 +39,15 @@ def data_spliter(x, y, proportion):
         return x_train, x_test, y_train, y_test
     except:
         return None
+    
+
+def data_preprocessing(df):
+    df.drop(df.columns[0], axis=1, inplace=True)
+    col_names = ["State"]
+    for i in range(1, 31):
+        col_names.append(f"f{i}")
+    df.columns = col_names
+    X = df[[feature for feature in df.columns if feature not in features_to_exclude]].to_numpy()
+    y = binarise(df["State"].to_numpy())
+    y = y.reshape((y.shape[0], -1))
+    return X, y
