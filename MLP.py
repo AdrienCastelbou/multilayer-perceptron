@@ -3,9 +3,9 @@ from matplotlib import pyplot as plt
 from utils import data_spliter
 
 class MLP():
-    def __init__(self, hidden_layer_sizes=2, max_epochs=300):
+    def __init__(self, hidden_layer_sizes=2, max_iter=300):
         self.n_layers = hidden_layer_sizes
-        self.max_epochs = max_epochs
+        self.max_iter = max_iter
         self.network = []
 
 
@@ -69,11 +69,11 @@ class MLP():
         X_train, X_test, y_train, y_test = data_spliter(X, y, 0.8)
         loss_log = []
         val_loss_log = []
-        for epoch in range(1, self.max_epochs + 1):
+        for epoch in range(1, self.max_iter + 1):
             self.train(X_train, y_train)
             train_preds = self.predict(X_train)
             test_preds = self.predict(X_test)
             loss_log.append(self.loss(train_preds, y_train))
             val_loss_log.append(self.loss(test_preds, y_test))
-            print(f"Epoch {epoch}/{self.max_epochs} - loss: {self.loss(train_preds, y_train)} - val_loss: {self.loss(test_preds, y_test)}")
+            print(f"Epoch {epoch}/{self.max_iter} - loss: {self.loss(train_preds, y_train)} - val_loss: {self.loss(test_preds, y_test)}")
         return loss_log, val_loss_log
