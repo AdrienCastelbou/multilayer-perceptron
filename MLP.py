@@ -16,18 +16,6 @@ class MLP():
             new_X[i] = exp_x / np.sum(exp_x)
         return new_X
 
-    def get_preds_proba(self, X, y):
-        p = self.softmax(X)
-        preds = []
-        for i in range(len(X)):
-            preds.append([p[i][y[i]]])
-        return np.array(preds).reshape(len(preds), -1)
-
-    def softmax_crossentropy(self, X, y):
-        preds = self.get_preds_proba(X, y)
-        log_likelihood = -np.log(preds)
-        loss = np.sum(log_likelihood) / len(X)
-        return loss
     
     def loss(self, y_hat, y):
         v_ones = np.ones((y.shape[0], 1))
@@ -38,7 +26,6 @@ class MLP():
         for i in range(len(X)):
             ones_for_answers[i,y[i][0]] = 1 
         return (- ones_for_answers + X) / X.shape[0]
-
 
 
     def create_network_(self, n_inputs, n_outputs):
