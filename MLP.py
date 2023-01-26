@@ -7,23 +7,33 @@ class MLP():
         self.network = []
 
 
-    def softmax(self, x):
-        exp_x = np.exp(x - np.max(x))
-        return exp_x / np.sum(exp_x)
+    def softmax(self, X):
+        new_X = np.array(X)
+        for i in range(new_X.shape[0]):
+            exp_x = np.exp(new_X[i] - np.max(new_X[i]))
+            new_X[i] = exp_x / np.sum(exp_x)
+        return new_X
 
+    def get_preds_proba(self, X, y):
+        p = self.softmax(X)
+        preds = []
+        for i in range(len(X)):
+            preds.append([p[i][y[i]]])
+        return np.array(preds).reshape(len(preds), -1)
 
-    def softmax_crossentropy_with_logits(self, logits,reference_answers):
-        print(logits)
-        logits_for_answers = logits[np.arange(len(logits)),reference_answers]
-        xentropy = - logits_for_answers + np.log(np.sum(np.exp(logits),axis=-1))
-        return xentropy
+    def loss(self, X, y):
+        preds = self.get_preds_proba(X, y)
+        log_likelihood = -np.log(preds)
+        loss = np.sum(log_likelihood) / len(X)
+        print(loss)
+        return loss
     
 
-    def grad_softmax_crossentropy_with_logits(self, logits,reference_answers):
-        ones_for_answers = np.zeros_like(logits)
-        ones_for_answers[np.arange(len(logits)),reference_answers] = 1
-        softmax = np.exp(logits) / np.exp(logits).sum(axis=-1,keepdims=True)
-        return (- ones_for_answers + softmax) / logits.shape[0]
+    def grad_softmax_crossentropy_with_logits(self, X, y):
+        grad = self.get_preds_proba(X, y)
+        grad -= 1
+        grad = grad / len(X)
+        return grad
 
 
 
@@ -58,7 +68,7 @@ class MLP():
         
         layer_inputs = [X]+layer_activations
         logits = layer_activations[-1]
-        loss = self.softmax_crossentropy_with_logits(logits,y)
+        loss = self.loss(logits,y)
         loss_grad = self.grad_softmax_crossentropy_with_logits(logits,y)
         for layer_index in range(len(self.network))[::-1]:
             layer = self.network[layer_index]
